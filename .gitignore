@@ -8,3 +8,6 @@ INSTALL_CUSTOM_VALIDATION.ps1
 TEST_CUSTOM_VALIDATION.ps1
 README_INSTALL_JA.txt
 REVIEW_NOTES_JA.txt
+backup-jro-webops-*/
+.env
+.env.local

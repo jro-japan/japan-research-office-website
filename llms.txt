@@ -1,11 +1,39 @@
 # Japan Research Office
+
+> Source-linked English intelligence from Japanese public, industry, corporate and patent sources for overseas business teams.
+
 Official website: https://japanresearchoffice.com
 Contact: hiroaki@japanresearchoffice.com
+Language: English
+Operator: Hiroaki Tsuboi, Japan
 
-Core services:
-- Industrial Signal Desk
-- Patent Intelligence
-- AI Research Service
-- Custom Research
+## Core services
 
-Research outputs are informational and do not constitute legal, patent-law, financial or investment advice.
+- Industrial Signal Desk: https://japanresearchoffice.com/industrial-signal-desk.html
+  Monitoring of Japanese data-centre, power-grid, semiconductor, permit, subsidy, construction, policy and infrastructure signals.
+- Patent Intelligence: https://japanresearchoffice.com/patent-intelligence.html
+  Defined-scope patent landscapes, monitoring, source-linked datasets and analytical reports with human review.
+- AI Research Service: https://japanresearchoffice.com/ai-research-service.html
+  Structured English research on Japanese markets, companies, technologies, regulations and industrial developments.
+- Custom Research: https://japanresearchoffice.com/custom-research.html
+  Defined-scope research designed around a client question, source set, geography, sector and deliverable.
+
+## Important pages
+
+- Services: https://japanresearchoffice.com/services.html
+- Industries: https://japanresearchoffice.com/industries.html
+- Methodology: https://japanresearchoffice.com/methodology.html
+- Quality: https://japanresearchoffice.com/quality.html
+- Pricing: https://japanresearchoffice.com/pricing.html
+- Illustrative case studies: https://japanresearchoffice.com/case-studies.html
+- FAQ: https://japanresearchoffice.com/faq.html
+- Request a sample: https://japanresearchoffice.com/sample.html
+- Contact: https://japanresearchoffice.com/contact.html
+- Privacy: https://japanresearchoffice.com/privacy.html
+- Terms: https://japanresearchoffice.com/terms.html
+
+## Evidence and limitations
+
+Outputs are based on identified sources and use source links where available and legally accessible. AI may support collection, classification, translation and drafting; human review is applied to source traceability, factual consistency and uncertainty labelling. Outputs are informational and do not constitute legal, patent-law, financial or investment advice. Illustrative samples are not client results.
+
+Last updated: 2026-07-28
