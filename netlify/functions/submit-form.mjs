@@ -47,7 +47,7 @@ export const handler = async (event) => {
     return wantsHtml(event) ? htmlResponse(400, "Please review your inquiry", message, contactEmail) : jsonResponse(400, { ok: false, message });
   }
 
-  const turnstileRequired = String(process.env.TURNSTILE_REQUIRED || "true").toLowerCase() !== "false";
+  const turnstileRequired = String(process.env.TURNSTILE_REQUIRED || "false").toLowerCase() === "true";
   if (turnstileRequired) {
     if (!process.env.TURNSTILE_SECRET_KEY) return jsonResponse(503, { ok: false, message: "Security verification is not configured." });
     const remoteIp = event.headers?.["x-nf-client-connection-ip"] || event.headers?.["x-forwarded-for"]?.split(",")[0]?.trim() || "";
