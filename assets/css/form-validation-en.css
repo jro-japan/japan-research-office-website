@@ -1,0 +1,30 @@
+.form-error-message {
+  margin: 0.45rem 0 0;
+  color: #b42318;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.form-error-message[hidden] {
+  display: none;
+}
+
+input.has-error,
+select.has-error,
+textarea.has-error {
+  border-color: #d92d20 !important;
+  box-shadow: 0 0 0 3px rgba(217, 45, 32, 0.12) !important;
+}
+
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+}
