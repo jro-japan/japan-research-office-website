@@ -1,11 +1,3 @@
-# Japan Research Office
-Official website: https://japanresearchoffice.com
-Contact: hiroaki@japanresearchoffice.com
-
-Core services:
-- Industrial Signal Desk
-- Patent Intelligence
-- AI Research Service
-- Custom Research
-
-Research outputs are informational and do not constitute legal, patent-law, financial or investment advice.
+User-agent: *
+Allow: /
+Sitemap: https://japanresearchoffice.com/sitemap.xml

@@ -1,21 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 600" role="img" aria-labelledby="t d">
-<title id="t">Japan market intelligence dashboard</title><desc id="d">Illustrative dashboard with source signals, trends and decision briefs</desc>
-<defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#F1F6FB"/><stop offset="1" stop-color="#EAF0F7"/></linearGradient></defs>
-<rect width="840" height="600" rx="34" fill="url(#g)"/>
-<rect x="58" y="48" width="724" height="502" rx="26" fill="#fff" stroke="#D9E3ED" stroke-width="3"/>
-<rect x="92" y="84" width="260" height="20" rx="7" fill="#0B2A4A"/>
-<rect x="92" y="122" width="530" height="10" rx="5" fill="#D3DEE9"/>
-<rect x="92" y="146" width="420" height="10" rx="5" fill="#E3EAF1"/>
-<rect x="92" y="195" width="305" height="248" rx="18" fill="#F8FBFD" stroke="#DEE7EF"/>
-<path d="M125 390 L173 331 L220 351 L268 278 L326 301 L365 230" fill="none" stroke="#0B2A4A" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="365" cy="230" r="12" fill="#E23B3B"/>
-<rect x="430" y="195" width="310" height="108" rx="18" fill="#0B2A4A"/>
-<rect x="457" y="224" width="160" height="14" rx="7" fill="#fff"/>
-<rect x="457" y="255" width="220" height="10" rx="5" fill="#BFD0E0"/>
-<rect x="430" y="328" width="310" height="115" rx="18" fill="#fff" stroke="#DEE7EF"/>
-<circle cx="469" cy="385" r="26" fill="#E23B3B"/>
-<rect x="513" y="362" width="165" height="13" rx="6" fill="#0B2A4A"/>
-<rect x="513" y="390" width="118" height="10" rx="5" fill="#B9C6D3"/>
-<rect x="92" y="472" width="648" height="38" rx="12" fill="#F3F7FA"/>
-<text x="110" y="497" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#5E7082">Illustrative intelligence dashboard</text>
-</svg>
+https://www.japanresearchoffice.com/* https://japanresearchoffice.com/:splat 301!
+/home /
+/* /404.html 404
