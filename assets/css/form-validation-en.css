@@ -10,17 +10,41 @@
   display: none;
 }
 
-input.has-error,
+input:not([type="checkbox"]):not([type="radio"]).has-error,
 select.has-error,
 textarea.has-error {
   border-color: #d92d20 !important;
   box-shadow: 0 0 0 3px rgba(217, 45, 32, 0.12) !important;
 }
 
-input[aria-invalid="true"],
+input:not([type="checkbox"]):not([type="radio"])[aria-invalid="true"],
 select[aria-invalid="true"],
 textarea[aria-invalid="true"] {
   outline: none;
+}
+
+/*
+ * Keep the Privacy Policy checkbox compact and inline.
+ * The site-wide input styles otherwise make it span the full form width.
+ */
+form[data-jro-validation-ready="true"] input[type="checkbox"] {
+  display: inline-block !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 0.5rem 0 0 !important;
+  vertical-align: middle;
+  box-shadow: none !important;
+  flex: 0 0 auto;
+}
+
+form[data-jro-validation-ready="true"] input[type="checkbox"].has-error,
+form[data-jro-validation-ready="true"] input[type="checkbox"][aria-invalid="true"] {
+  border-color: initial !important;
+  box-shadow: none !important;
+  outline: 2px solid #d92d20;
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
