@@ -1,0 +1,12 @@
+JRO GitHub Actions Stable Patch v6.0
+
+1. Extract this ZIP.
+2. Copy all extracted contents into the local GitHub repository root.
+3. Choose 'Replace the files in the destination'.
+4. Open GitHub Desktop.
+5. Commit message:
+   Fix GitHub Actions with stable repository QA
+6. Push origin.
+
+This patch replaces the old W3C HTML/CSS validator workflow.
+The website content itself is not replaced.

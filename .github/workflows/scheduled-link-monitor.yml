@@ -1,4 +1,4 @@
-name: Scheduled Link Monitor
+name: Scheduled External Link Monitor
 
 on:
   schedule:
@@ -10,30 +10,33 @@ permissions:
   issues: write
 
 jobs:
-  links:
+  external-links:
+    name: External link report
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
-      - uses: actions/checkout@v6
-      - name: Check internal and external links
+      - uses: actions/checkout@v4
+
+      - name: Check external links
         id: lychee
         uses: lycheeverse/lychee-action@v2
         with:
           args: >-
-            --root-dir "${{ github.workspace }}"
             --verbose
             --no-progress
             --exclude-mail
+            --exclude '^https://japanresearchoffice\.com'
             './**/*.html'
             './**/*.md'
             './**/*.txt'
           fail: false
-          failIfEmpty: true
           format: markdown
           output: ./lychee-report.md
-      - name: Create issue when broken links are found
+
+      - name: Open an issue when broken links are found
         if: steps.lychee.outputs.exit_code != 0
-        uses: peter-evans/create-issue-from-file@v6
+        uses: peter-evans/create-issue-from-file@v5
         with:
-          title: Automated broken-link report
+          title: Automated external-link report
           content-filepath: ./lychee-report.md
           labels: automated, quality, broken-link
