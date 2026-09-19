@@ -1,39 +1,35 @@
 # Japan Research Office
 
-> Source-linked English intelligence from Japanese public, industry, corporate and patent sources for overseas business teams.
+> Primary-source research for business decisions. Japan is a core specialization; broader official and public primary-source coverage is used when the defined business question requires it.
 
 Official website: https://japanresearchoffice.com
 Contact: hiroaki@japanresearchoffice.com
-Language: English
 Operator: Hiroaki Tsuboi, Japan
+Communication: Email only
 
-## Core services
+## Service architecture
 
-- Industrial Signal Desk: https://japanresearchoffice.com/industrial-signal-desk.html
-  Monitoring of Japanese data-centre, power-grid, semiconductor, permit, subsidy, construction, policy and infrastructure signals.
-- Patent Intelligence: https://japanresearchoffice.com/patent-intelligence.html
-  Defined-scope patent landscapes, monitoring, source-linked datasets and analytical reports with human review.
-- AI Research Service: https://japanresearchoffice.com/ai-research-service.html
-  Structured English research on Japanese markets, companies, technologies, regulations and industrial developments.
-- Custom Research: https://japanresearchoffice.com/custom-research.html
-  Defined-scope research designed around a client question, source set, geography, sector and deliverable.
+- Japan Intelligence: https://japanresearchoffice.com/services.html
+  Research on Japanese companies, suppliers, markets, products, facilities and commercial developments, including direct research of Japanese-language primary sources.
+- Evidence Checks: https://japanresearchoffice.com/services.html
+  Defined-scope research around a concrete claim, entity, facility, product, standard, certification, failure, transaction, regulatory issue or document.
+- Commercial Change Intelligence: https://japanresearchoffice.com/services.html
+  Evidence-led research into commercially relevant state changes, focused on what changed, what primary evidence confirms and what remains unknown.
+
+## Evidence discipline
+
+Client-facing research separates Confirmed Facts, Supported Inferences and Unknowns. A signal is not treated as proof of a downstream commercial event unless the evidence establishes that event. JRO provides evidence and analysis, not final legal, engineering, compliance, procurement, financial or other professional decisions.
 
 ## Important pages
 
 - Services: https://japanresearchoffice.com/services.html
-- Industries: https://japanresearchoffice.com/industries.html
 - Methodology: https://japanresearchoffice.com/methodology.html
 - Quality: https://japanresearchoffice.com/quality.html
-- Pricing: https://japanresearchoffice.com/pricing.html
-- Illustrative case studies: https://japanresearchoffice.com/case-studies.html
 - FAQ: https://japanresearchoffice.com/faq.html
-- Request a sample: https://japanresearchoffice.com/sample.html
+- About: https://japanresearchoffice.com/about.html
 - Contact: https://japanresearchoffice.com/contact.html
+- Japanese: https://japanresearchoffice.com/ja/
 - Privacy: https://japanresearchoffice.com/privacy.html
 - Terms: https://japanresearchoffice.com/terms.html
 
-## Evidence and limitations
-
-Outputs are based on identified sources and use source links where available and legally accessible. AI may support collection, classification, translation and drafting; human review is applied to source traceability, factual consistency and uncertainty labelling. Outputs are informational and do not constitute legal, patent-law, financial or investment advice. Illustrative samples are not client results.
-
-Last updated: 2026-07-28
+Last updated: 2026-09-20
