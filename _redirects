@@ -1,3 +1,11 @@
 https://www.japanresearchoffice.com/* https://japanresearchoffice.com/:splat 301!
 /home /
+/industrial-signal-desk.html /services.html 301!
+/patent-intelligence.html /services.html 301!
+/ai-research-service.html /services.html 301!
+/custom-research.html /services.html 301!
+/industries.html /services.html 301!
+/pricing.html /contact.html 301!
+/case-studies.html /methodology.html 301!
+/sample.html /services.html 301!
 /* /404.html 404
