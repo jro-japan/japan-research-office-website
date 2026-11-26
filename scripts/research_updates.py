@@ -1,5 +1,5 @@
 """Validate and render explicitly approved public research updates; no network or writes."""
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timezone, timedelta
 from hashlib import sha256
 from html import escape
 import json
@@ -48,7 +48,7 @@ def plain(value, limit):
 def validate(rows):
     require(isinstance(rows, list) and len(rows) <= 1000, "Invalid registry")
     identities, source_keys, source_urls = {}, {}, {}
-    today = datetime.now(timezone.utc).date()
+    today = datetime.now(timezone(timedelta(hours=9))).date()
     for r in rows:
         require(isinstance(r, dict) and set(r) == FIELDS, "Invalid record fields")
         require(isinstance(r["id"], str) and bool(re.fullmatch(r"JRO-R-[a-f0-9]{16}", r["id"])), "Invalid ID")
