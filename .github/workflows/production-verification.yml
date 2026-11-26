@@ -17,7 +17,7 @@ jobs:
           import hashlib, urllib.request, urllib.error, time, re, difflib
           from html.parser import HTMLParser
           from pathlib import Path
-          from urllib.parse import urlsplit
+          from urllib.parse import urlsplit, urlunsplit
           BASE = "https://japanresearchoffice.com"
           paths = {"index.html":"/", "pricing.html":"/pricing.html", "research-products.html":"/research-products.html", "trust-center.html":"/trust-center.html", "ordering-payment.html":"/ordering-payment.html", "customer-support.html":"/customer-support.html", "research-library.html":"/research-library.html", "sample-tender-evidence.html":"/sample-tender-evidence.html", "sitemap.xml":"/sitemap.xml"}
           def request(path):
@@ -50,7 +50,12 @@ jobs:
               def norm(self,items):
                   return re.sub(r"\s+"," "," ".join(x.strip() for x in items if x.strip())).strip()
               def fields(self):
-                  return (self.norm(self.text), sorted(self.links), self.norm(self.headings), sorted(self.meta))
+                  def normalize_link(href):
+                      u=urlsplit(href)
+                      if not u.scheme and not u.netloc and u.path.startswith("/") and u.path.endswith(".html"):
+                          return urlunsplit((u.scheme,u.netloc,u.path[:-5],u.query,u.fragment))
+                      return href
+                  return (self.norm(self.text), sorted(normalize_link(h) for h in self.links), self.norm(self.headings), sorted(self.meta))
           for attempt in range(3):
               errors=[]
               for file,path in paths.items():
@@ -87,8 +92,18 @@ jobs:
                       if not ok: errors.append(path)
                   except Exception as e:
                       print(f"{path}: {type(e).__name__}: {e}",flush=True); errors.append(path)
+              for file,path in paths.items():
+                  if not path.endswith(".html"): continue
+                  short=path[:-5]
+                  try:
+                      code,url,h,data=request(short)
+                      ok=code==200 and urlsplit(url).hostname=="japanresearchoffice.com" and Page(data).fields()==Page(Path(file).read_bytes()).fields()
+                      print(f"{short}: HTTP {code}; extensionless content matches={ok}",flush=True)
+                      if not ok: errors.append(short)
+                  except Exception as e:
+                      print(f"{short}: {type(e).__name__}: {e}",flush=True); errors.append(short)
               if not errors:
-                  print("PRODUCTION RELEASE VERIFIED: 9 source content checks and 3 route/policy checks passed.",flush=True); break
+                  print("PRODUCTION RELEASE VERIFIED: 9 content checks, 3 route/policy checks and 7 extensionless links passed.",flush=True); break
               if attempt==2: raise SystemExit("PRODUCTION NOT VERIFIED: "+", ".join(errors))
               time.sleep(10)
           PY
