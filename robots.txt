@@ -17,7 +17,7 @@ Allow: /
 User-agent: bingbot
 Allow: /
 
-# Training-only use is not required for search visibility.
+# Training opt-out. Google-Extended also controls grounding in certain non-Search Google AI products.
 User-agent: GPTBot
 Disallow: /
 User-agent: ClaudeBot
