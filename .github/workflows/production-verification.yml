@@ -1,0 +1,109 @@
+name: Production release verification (read-only)
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v5
+      - name: Verify production release content
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, urllib.request, urllib.error, time, re, difflib
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import urlsplit, urlunsplit
+          BASE = "https://japanresearchoffice.com"
+          paths = {"index.html":"/", "pricing.html":"/pricing.html", "research-products.html":"/research-products.html", "trust-center.html":"/trust-center.html", "ordering-payment.html":"/ordering-payment.html", "customer-support.html":"/customer-support.html", "research-library.html":"/research-library.html", "sample-tender-evidence.html":"/sample-tender-evidence.html", "sitemap.xml":"/sitemap.xml"}
+          def request(path):
+              req = urllib.request.Request(BASE+path, headers={"User-Agent":"JRO-Public-Release-QA/1.0","Cache-Control":"no-cache"})
+              try:
+                  with urllib.request.urlopen(req,timeout=12) as r:
+                      return r.status,r.url,r.headers,r.read()
+              except urllib.error.HTTPError as r:
+                  return r.code,r.url,r.headers,r.read()
+          class Page(HTMLParser):
+              def __init__(self, data):
+                  super().__init__(convert_charrefs=True)
+                  self.text=[]; self.links=[]; self.headings=[]; self.meta=[]; self.scripts=[]; self.skip=0; self.h=None
+                  self.feed(data.decode("utf-8"))
+              def handle_starttag(self,tag,attrs):
+                  a=dict(attrs)
+                  if tag in ("script","style"):
+                      self.skip+=1
+                      if tag=="script": self.scripts.append((a.get("src",""),a.get("type","")))
+                  if tag=="a": self.links.append(a.get("href",""))
+                  if tag=="link" and a.get("rel") in ("canonical","stylesheet","manifest"): self.meta.append((a.get("rel"),a.get("href","")))
+                  if tag=="meta" and a.get("name") in ("description","robots"): self.meta.append((a.get("name"),a.get("content","")))
+                  if tag in ("h1","h2","h3"): self.h=tag; self.headings.append(tag)
+              def handle_endtag(self,tag):
+                  if tag in ("script","style"): self.skip=max(0,self.skip-1)
+                  if tag in ("h1","h2","h3"): self.h=None
+              def handle_data(self,data):
+                  if not self.skip: self.text.append(data)
+                  if self.h: self.headings.append(data)
+              def norm(self,items):
+                  return re.sub(r"\s+"," "," ".join(x.strip() for x in items if x.strip())).strip()
+              def fields(self):
+                  def normalize_link(href):
+                      u=urlsplit(href)
+                      if not u.scheme and not u.netloc and u.path.startswith("/") and u.path.endswith(".html"):
+                          return urlunsplit((u.scheme,u.netloc,u.path[:-5],u.query,u.fragment))
+                      return href
+                  return (self.norm(self.text), sorted(normalize_link(h) for h in self.links), self.norm(self.headings), sorted(self.meta))
+          for attempt in range(3):
+              errors=[]
+              for file,path in paths.items():
+                  try:
+                      code,url,h,data=request(path+"?jro-release=2c27a334")
+                      expected=Path(file).read_bytes()
+                      exact=hashlib.sha256(data).digest()==hashlib.sha256(expected).digest()
+                      noindex="noindex" in h.get("X-Robots-Tag","").lower()
+                      print(f"{path}: HTTP {code}; exact_source_sha256_match={exact}; noindex_header={noindex}; final_path={urlsplit(url).path}",flush=True)
+                      semantic=exact
+                      if file.endswith(".html") and code==200:
+                          a,b=Page(expected),Page(data)
+                          fields=[x==y for x,y in zip(a.fields(),b.fields())]
+                          semantic=all(fields)
+                          print(f"  text, links, headings, metadata match={fields}; script_tags_match={a.scripts==b.scripts}",flush=True)
+                          if not fields[0]:
+                              for item in list(difflib.unified_diff(a.fields()[0].split(),b.fields()[0].split(),n=3))[:22]: print("  "+item,flush=True)
+                          if not fields[1]: print("  links missing:",sorted(set(a.links)-set(b.links))[:8],"extra:",sorted(set(b.links)-set(a.links))[:8],flush=True)
+                          if a.scripts!=b.scripts: print("  extra scripts:",sorted(set(b.scripts)-set(a.scripts))[:8],flush=True)
+                          if file in ("index.html","pricing.html","research-products.html"):
+                              quote="individual written quotation" in b.fields()[0].lower()
+                              old=bool(re.search(r"US\$\s*400\b",b.fields()[0],re.I))
+                              print(f"  quotation_present={quote}; old_fixed_price_present={old}",flush=True)
+                              semantic=semantic and quote and not old
+                      if code!=200 or not semantic or noindex or urlsplit(url).hostname!="japanresearchoffice.com": errors.append(path)
+                  except Exception as e:
+                      print(f"{path}: {type(e).__name__}: {e}",flush=True); errors.append(path)
+              for path,want,dest in [("/README_DEPLOY.txt",404,None),("/sample.html",200,"/research-library.html"),("/research-updates.html",200,"/research-updates.html")]:
+                  try:
+                      code,url,h,data=request(path)
+                      ok=code==want and (dest is None or urlsplit(url).path==dest)
+                      if path=="/research-updates.html": ok=ok and b'content="noindex,follow"' in data
+                      print(f"{path}: HTTP {code}; final_path={urlsplit(url).path}; expected_policy={ok}",flush=True)
+                      if not ok: errors.append(path)
+                  except Exception as e:
+                      print(f"{path}: {type(e).__name__}: {e}",flush=True); errors.append(path)
+              for file,path in paths.items():
+                  if not path.endswith(".html"): continue
+                  short=path[:-5]
+                  try:
+                      code,url,h,data=request(short)
+                      ok=code==200 and urlsplit(url).hostname=="japanresearchoffice.com" and Page(data).fields()==Page(Path(file).read_bytes()).fields()
+                      print(f"{short}: HTTP {code}; extensionless content matches={ok}",flush=True)
+                      if not ok: errors.append(short)
+                  except Exception as e:
+                      print(f"{short}: {type(e).__name__}: {e}",flush=True); errors.append(short)
+              if not errors:
+                  print("PRODUCTION RELEASE VERIFIED: 9 content checks, 3 route/policy checks and 7 extensionless links passed.",flush=True); break
+              if attempt==2: raise SystemExit("PRODUCTION NOT VERIFIED: "+", ".join(errors))
+              time.sleep(10)
+          PY
