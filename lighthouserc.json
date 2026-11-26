@@ -9,7 +9,10 @@
         "http://localhost/research-products.html",
         "http://localhost/research-library.html",
         "http://localhost/contact.html",
-        "http://localhost/ja/"
+        "http://localhost/ja/",
+        "http://localhost/trust-center.html",
+        "http://localhost/ordering-payment.html",
+        "http://localhost/sample-tender-evidence.html"
       ],
       "numberOfRuns": 1,
       "settings": {
