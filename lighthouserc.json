@@ -1,12 +1,15 @@
 {
   "ci": {
     "collect": {
-      "staticDistDir": ".",
+      "staticDistDir": "dist",
       "url": [
         "http://localhost/",
         "http://localhost/services.html",
         "http://localhost/pricing.html",
-        "http://localhost/contact.html"
+        "http://localhost/research-products.html",
+        "http://localhost/research-library.html",
+        "http://localhost/contact.html",
+        "http://localhost/ja/"
       ],
       "numberOfRuns": 1,
       "settings": {
