@@ -1,0 +1,54 @@
+name: Production release verification (read-only)
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v5
+      - name: Verify production release content
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, urllib.request, urllib.error, time, xml.etree.ElementTree as ET
+          from pathlib import Path
+          from urllib.parse import urlsplit
+          BASE = "https://japanresearchoffice.com"
+          paths = {"index.html":"/", "pricing.html":"/pricing.html", "research-products.html":"/research-products.html", "trust-center.html":"/trust-center.html", "ordering-payment.html":"/ordering-payment.html", "customer-support.html":"/customer-support.html", "research-library.html":"/research-library.html", "sample-tender-evidence.html":"/sample-tender-evidence.html", "sitemap.xml":"/sitemap.xml"}
+          def request(path):
+              req = urllib.request.Request(BASE+path, headers={"User-Agent":"JRO-Public-Release-QA/1.0","Cache-Control":"no-cache"})
+              try:
+                  with urllib.request.urlopen(req,timeout=12) as r:
+                      return r.status,r.url,r.headers,r.read()
+              except urllib.error.HTTPError as r:
+                  return r.code,r.url,r.headers,r.read()
+          for attempt in range(3):
+              errors=[]
+              for file,path in paths.items():
+                  try:
+                      code,url,h,data=request(path+"?jro-release=2c27a334")
+                      expected=Path(file).read_bytes()
+                      exact=hashlib.sha256(data).digest()==hashlib.sha256(expected).digest()
+                      noindex="noindex" in h.get("X-Robots-Tag","").lower()
+                      print(f"{path}: HTTP {code}; exact_source_sha256_match={exact}; noindex_header={noindex}; final_path={urlsplit(url).path}",flush=True)
+                      if code!=200 or not exact or noindex or urlsplit(url).hostname!="japanresearchoffice.com": errors.append(path)
+                  except Exception as e:
+                      print(f"{path}: {type(e).__name__}: {e}",flush=True); errors.append(path)
+              for path,want,dest in [("/README_DEPLOY.txt",404,None),("/sample.html",200,"/research-library.html"),("/research-updates.html",200,"/research-updates.html")]:
+                  try:
+                      code,url,h,data=request(path)
+                      ok=code==want and (dest is None or urlsplit(url).path==dest)
+                      if path=="/research-updates.html": ok=ok and b'content="noindex,follow"' in data
+                      print(f"{path}: HTTP {code}; final_path={urlsplit(url).path}; expected_policy={ok}",flush=True)
+                      if not ok: errors.append(path)
+                  except Exception as e:
+                      print(f"{path}: {type(e).__name__}: {e}",flush=True); errors.append(path)
+              if not errors:
+                  print("PRODUCTION RELEASE VERIFIED: 9 source hashes and 3 route/policy checks passed.",flush=True); break
+              if attempt==2: raise SystemExit("PRODUCTION NOT VERIFIED: "+", ".join(errors))
+              time.sleep(10)
+          PY
