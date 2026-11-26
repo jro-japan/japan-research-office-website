@@ -17,7 +17,7 @@ concurrency:
 jobs:
   repository-qa:
     name: Repository QA
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
@@ -32,5 +32,43 @@ jobs:
       - name: Install QA dependencies
         run: python -m pip install --requirement requirements-qa.txt
 
+      - name: Test publication gates
+        run: python -m unittest discover -s scripts -p 'test_research_updates.py' -v
+
+      - name: Test offline funnel reporting
+        run: python -m unittest discover -s scripts -p 'test_funnel_report.py' -v
+
       - name: Validate website
         run: python scripts/validate_site.py
+
+      - name: Install Chromium smoke-test dependency
+        run: python -m pip install playwright==1.56.0
+
+      - name: Install Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Browser smoke test
+        run: python scripts/test_browser.py
+
+      - name: Confirm retired form has no external side effects
+        run: >-
+          node --input-type=module -e 'import assert from "node:assert/strict"; import {handler} from "./netlify/functions/submit-form.mjs"; globalThis.fetch=()=>{throw Error("Unexpected network call")}; for (const httpMethod of ["GET","POST","OPTIONS"]) { const r=await handler({httpMethod,body:"{}"}); assert.equal(r.statusCode,410); assert.equal(JSON.parse(r.body).ok,false); } console.log("Retired form: PASS (3 methods, no external request)");'
+
+      - name: Public DNS and HTTPS diagnostics
+        if: always()
+        run: python scripts/audit_network.py
+        timeout-minutes: 3
+        continue-on-error: true
+
+      - name: Export public audit packet
+        if: always()
+        run: python scripts/export_public_audit.py
+
+      - name: Upload public audit packet
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jro-public-audit-text
+          path: audit-output/*.txt
+          retention-days: 7
+          if-no-files-found: error
