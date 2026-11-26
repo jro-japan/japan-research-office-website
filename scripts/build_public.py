@@ -10,6 +10,7 @@ PAGES = (
     "quality.html", "faq.html", "about.html", "contact.html", "privacy.html",
     "terms.html", "accessibility.html", "research-products.html",
     "research-library.html", "pricing.html",
+    "trust-center.html", "ordering-payment.html", "sample-tender-evidence.html",
 )
 PUBLIC_FILES = PAGES + (
     "404.html", "styles.css", "robots.txt", "sitemap.xml", "llms.txt",
