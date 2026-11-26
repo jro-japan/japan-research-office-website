@@ -2,6 +2,8 @@
 """Build a static deploy artifact from an explicit public-file allowlist."""
 from pathlib import Path
 import shutil
+import json
+from research_updates import render_page
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
@@ -11,6 +13,7 @@ PAGES = (
     "terms.html", "accessibility.html", "research-products.html",
     "research-library.html", "pricing.html",
     "trust-center.html", "ordering-payment.html", "sample-tender-evidence.html",
+    "customer-support.html", "research-updates.html",
 )
 PUBLIC_FILES = PAGES + (
     "404.html", "styles.css", "robots.txt", "sitemap.xml", "llms.txt",
@@ -26,6 +29,10 @@ def build():
         src = ROOT / rel
         if not src.is_file() or src.resolve() != src:
             raise ValueError(f"Missing or unsafe public file: {rel}")
+    registry = ROOT / 'research/approved-updates.json'
+    if not registry.is_file() or registry.resolve() != registry:
+        raise ValueError('Missing or unsafe approved registry')
+    updates = render_page((ROOT / 'research-updates.html').read_text(encoding='utf-8'), json.loads(registry.read_text(encoding='utf-8')))
     if DIST.is_symlink():
         raise ValueError("Refusing symlink dist")
     if DIST.exists():
@@ -34,7 +41,10 @@ def build():
     for rel in PUBLIC_FILES:
         dest = DIST / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(ROOT / rel, dest)
+        if rel == 'research-updates.html':
+            dest.write_text(updates, encoding='utf-8')
+        else:
+            shutil.copyfile(ROOT / rel, dest)
     actual = {p.relative_to(DIST).as_posix() for p in DIST.rglob("*") if p.is_file()}
     if actual != set(PUBLIC_FILES):
         raise ValueError(f"Unexpected artifact contents: {actual ^ set(PUBLIC_FILES)}")
