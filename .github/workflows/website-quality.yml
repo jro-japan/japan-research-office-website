@@ -46,3 +46,12 @@ jobs:
 
       - name: Browser smoke test
         run: python scripts/test_browser.py
+
+      - name: Confirm retired form has no external side effects
+        run: >-
+          node --input-type=module -e 'import assert from "node:assert/strict"; import {handler} from "./netlify/functions/submit-form.mjs"; globalThis.fetch=()=>{throw Error("Unexpected network call")}; for (const httpMethod of ["GET","POST","OPTIONS"]) { const r=await handler({httpMethod,body:"{}"}); assert.equal(r.statusCode,410); assert.equal(JSON.parse(r.body).ok,false); } console.log("Retired form: PASS (3 methods, no external request)");'
+
+      - name: Public DNS and HTTPS diagnostics
+        run: python scripts/audit_network.py
+        timeout-minutes: 3
+        continue-on-error: true
