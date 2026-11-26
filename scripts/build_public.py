@@ -15,6 +15,8 @@ PAGES = (
     "trust-center.html", "ordering-payment.html", "sample-tender-evidence.html",
     "customer-support.html", "research-updates.html",
 )
+# Research updates remain reachable but are not indexed until a reviewed release enables them.
+INDEXED_PAGES = tuple(p for p in PAGES if p != "research-updates.html")
 PUBLIC_FILES = PAGES + (
     "404.html", "styles.css", "robots.txt", "sitemap.xml", "llms.txt",
     "site.webmanifest", "_headers", "_redirects",
@@ -48,7 +50,7 @@ def build():
     actual = {p.relative_to(DIST).as_posix() for p in DIST.rglob("*") if p.is_file()}
     if actual != set(PUBLIC_FILES):
         raise ValueError(f"Unexpected artifact contents: {actual ^ set(PUBLIC_FILES)}")
-    print(f"Public build: {len(actual)} allowlisted files, {len(PAGES)} indexed pages")
+    print(f"Public build: {len(actual)} allowlisted files, {len(INDEXED_PAGES)} indexed pages")
     return DIST
 
 if __name__ == "__main__":
