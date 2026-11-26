@@ -17,7 +17,7 @@ concurrency:
 jobs:
   repository-qa:
     name: Repository QA
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
@@ -52,14 +52,17 @@ jobs:
           node --input-type=module -e 'import assert from "node:assert/strict"; import {handler} from "./netlify/functions/submit-form.mjs"; globalThis.fetch=()=>{throw Error("Unexpected network call")}; for (const httpMethod of ["GET","POST","OPTIONS"]) { const r=await handler({httpMethod,body:"{}"}); assert.equal(r.statusCode,410); assert.equal(JSON.parse(r.body).ok,false); } console.log("Retired form: PASS (3 methods, no external request)");'
 
       - name: Public DNS and HTTPS diagnostics
+        if: always()
         run: python scripts/audit_network.py
         timeout-minutes: 3
         continue-on-error: true
 
       - name: Export public audit packet
+        if: always()
         run: python scripts/export_public_audit.py
 
       - name: Upload public audit packet
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: jro-public-audit-text
