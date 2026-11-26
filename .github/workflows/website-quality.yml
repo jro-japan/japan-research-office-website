@@ -35,6 +35,9 @@ jobs:
       - name: Test publication gates
         run: python -m unittest discover -s scripts -p 'test_research_updates.py' -v
 
+      - name: Test offline funnel reporting
+        run: python -m unittest discover -s scripts -p 'test_funnel_report.py' -v
+
       - name: Validate website
         run: python scripts/validate_site.py
 
