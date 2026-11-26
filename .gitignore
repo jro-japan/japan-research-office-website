@@ -11,3 +11,5 @@ REVIEW_NOTES_JA.txt
 backup-jro-webops-*/
 .env
 .env.local
+/dist/
+__pycache__/
