@@ -1,10 +1,10 @@
 import copy
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import unittest
 from research_updates import GATES, digest, render, render_page, validate, MARKER
 
 def record():
-    today = datetime.now(timezone.utc).date().isoformat()
+    today = datetime.now(timezone(timedelta(hours=9))).date().isoformat()
     key = "a"*64
     r = {"id": "JRO-R-"+key[:16], "version": 1, "source_key": key,
          "title": "Fictional QA fixture & test", "category": "Market",
