@@ -22,6 +22,13 @@ Client-facing research separates Confirmed Facts, Supported Inferences and Unkno
 
 ## Important pages
 
+- Products: https://japanresearchoffice.com/research-products.html
+- Pricing: https://japanresearchoffice.com/pricing.html
+- Research Library: https://japanresearchoffice.com/research-library.html
+- Worked historical notice sample: https://japanresearchoffice.com/sample-tender-evidence.html
+- Vendor review: https://japanresearchoffice.com/trust-center.html
+- Ordering: https://japanresearchoffice.com/ordering-payment.html
+
 - Services: https://japanresearchoffice.com/services.html
 - Methodology: https://japanresearchoffice.com/methodology.html
 - Quality: https://japanresearchoffice.com/quality.html
@@ -32,4 +39,4 @@ Client-facing research separates Confirmed Facts, Supported Inferences and Unkno
 - Privacy: https://japanresearchoffice.com/privacy.html
 - Terms: https://japanresearchoffice.com/terms.html
 
-Last updated: 2026-09-20
+Last updated: 2026-11-27
