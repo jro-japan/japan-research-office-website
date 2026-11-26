@@ -13,3 +13,5 @@ backup-jro-webops-*/
 .env.local
 /dist/
 __pycache__/
+/private-metrics/
+/audit-output/
