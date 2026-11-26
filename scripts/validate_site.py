@@ -124,13 +124,21 @@ for rel in ("index.html", "pricing.html", "research-products.html", "contact.htm
         check(url in links, f"{rel}: missing buyer review route {url}")
 sample = pages["sample-tender-evidence.html"]
 sample_text = sample.get_text(" ", strip=True)
-for label in ("Confirmed facts", "Supported inference", "Unknowns", "JRO-SAMPLE-001", "v1.0", "Not assessed for any supplier"):
+for label in ("Confirmed facts", "Supported inference", "Unknowns", "JRO-SAMPLE-001", "v1.1", "Not assessed for any supplier"):
     check(label in sample_text, f"Sample missing evidence marker: {label}")
 check(bool(sample.find("a", href="https://www.ndl.go.jp/supply/nyuusatsu/ippan/20260729_jitsumu2")), "Sample missing primary source")
 check(bool(pages["research-library.html"].find("a", href="/sample-tender-evidence.html")), "Library missing sample")
 check(bool(pages["ordering-payment.html"].find("a", href=lambda h: h and h.startswith("mailto:hiroaki@japanresearchoffice.com?"))), "Ordering missing email request")
 check("No online checkout" in pages["ordering-payment.html"].get_text(" ", strip=True), "Ordering payment status must remain explicit")
 
+# Static email CTA codes are not web tracking or payment evidence.
+from urllib.parse import parse_qs
+for rel, code in (("index.html","HOME"), ("ja/index.html","JA"), ("contact.html","CONTACT"), ("research-products.html","PRODUCT"), ("ordering-payment.html","ORDERING")):
+    links = [a.get("href","") for a in pages[rel].find_all("a")]
+    subjects = [parse_qs(urlsplit(h).query).get("subject", [""])[0] for h in links if h.startswith("mailto:hiroaki@japanresearchoffice.com?")]
+    check(any(t.startswith(f"[JRO-WEB:{code}] ") for t in subjects), f"{rel}: inquiry origin code missing")
+check(not (dist / "scripts/funnel_report.py").exists(), "Internal funnel tool leaked")
+check(not (dist / "private-metrics").exists(), "Private measurement directory leaked")
 if errors:
     print("\n".join("ERROR: " + error for error in errors))
     sys.exit(1)
