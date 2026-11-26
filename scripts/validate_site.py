@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 from bs4 import BeautifulSoup
-from build_public import ROOT, PAGES, PUBLIC_FILES, build
+from build_public import ROOT, PAGES, INDEXED_PAGES, PUBLIC_FILES, build
 
 BASE = "https://japanresearchoffice.com"
 errors = []
@@ -38,7 +38,7 @@ for rel in (*PAGES, "404.html"):
     check(bool(soup.find("link", rel="manifest")), f"{rel}: missing manifest")
     robots = soup.find("meta", attrs={"name": "robots"})
     noindex = bool(robots and "noindex" in robots.get("content", "").lower())
-    check(noindex == (rel == "404.html"), f"{rel}: unexpected indexing policy")
+    check(noindex == (rel not in INDEXED_PAGES), f"{rel}: unexpected indexing policy")
     scripts = soup.find_all("script", attrs={"type": "application/ld+json"})
     check(len(scripts) == 1, f"{rel}: expected one JSON-LD block")
     for script in scripts:
@@ -50,7 +50,7 @@ for rel in (*PAGES, "404.html"):
     ids = [tag["id"] for tag in soup.find_all(id=True)]
     check(len(ids) == len(set(ids)), f"{rel}: duplicate IDs")
     visible = soup.get_text(" ", strip=True)
-    check(not re.search(r"Industrial Signal Desk|Patent Intelligence|US\$\s*(69|150|490|1,250|2,900)\b", visible, re.I), f"{rel}: retired offer detected")
+    check(not re.search(r"Industrial Signal Desk|Patent Intelligence|US\$\s*(69|150|400|490|1,250|2,900)\b", visible, re.I), f"{rel}: retired offer detected")
 
 def resolve(raw, origin):
     u = urlsplit(urljoin(origin, raw))
@@ -89,7 +89,7 @@ for rel in ("assets/img/favicon.svg", "assets/img/logo.svg"):
 
 ns = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
 locs = [e.text for e in ET.parse(dist / "sitemap.xml").findall("s:url/s:loc", ns)]
-check(len(locs) == len(set(locs)) and set(locs) == {page_url(p) for p in PAGES}, "Sitemap does not match indexed public pages")
+check(len(locs) == len(set(locs)) and set(locs) == {page_url(p) for p in INDEXED_PAGES}, "Sitemap does not match indexed public pages")
 redirects = [line.split() for line in (dist / "_redirects").read_text().splitlines() if line.strip() and not line.startswith("#")]
 check(bool(redirects and redirects[-1] == ["/*", "/404.html", "404"]), "404 fallback must be last")
 active = {urlsplit(page_url(p)).path for p in PAGES}
@@ -105,7 +105,7 @@ for name in retired:
         row = routes.get("/" + name + suffix, [])
         check(len(row) == 3 and row[-1] == "301!", f"Missing retired route: {name}{suffix}")
 for rel in ("index.html", "pricing.html", "research-products.html"):
-    check("US$400" in pages[rel].get_text(" ", strip=True), f"{rel}: proposed product price missing")
+    check("individual written quotation" in pages[rel].get_text(" ", strip=True).lower(), f"{rel}: quotation-only pricing missing")
 for rel in ("README_DEPLOY.txt", "GITHUB_OPERATIONS.md", "FINAL_REVIEW_REPORT.md", "scripts/validate_site.py", ".gitignore", "site.js", "site.css", "sample.html", "thank-you.html"):
     check(not (dist / rel).exists(), f"Nonpublic file leaked into artifact: {rel}")
 
@@ -142,4 +142,4 @@ check(not (dist / "private-metrics").exists(), "Private measurement directory le
 if errors:
     print("\n".join("ERROR: " + error for error in errors))
     sys.exit(1)
-print(f"Public artifact QA: PASS ({len(PAGES)} indexed pages, {len(PUBLIC_FILES)} files)")
+print(f"Public artifact QA: PASS ({len(INDEXED_PAGES)} indexed pages, {len(PUBLIC_FILES)} files)")
